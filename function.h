@@ -16,8 +16,8 @@ double K (double x, double x1, double x2, double L)
         return k1;
     if (fabs(x-x1) > EPS && fabs(x-x2) > EPS)
         return (k1*(x-x2)/(x1-x2)+k2*(x-x1)/(x2-x1));
-    if (fabs(x-x2) <= EPS && fabs(x-L) <= EPS)
-        return k2
+	if (fabs(x - x2) <= EPS && fabs(x - L) <= EPS)
+		return k2;
 }
 
 double K (double u)
@@ -58,10 +58,13 @@ std::vector<double> progon(std::vector<double> a, std::vector<double> b, std::ve
     return y;
 }
 
-void intergo_interpolation(int n, int t,  double h, double tau, double c, double p)
+void intergo_interpolation(int n, int t,  double h, double tau, double c, double p, double L)
 {
-    std::ofstream fout;
-    std::vector<double> A(n);
+    std::ofstream		fout;
+	double	x(n);
+	std::vector<double>	a(n);
+	std::vector<double>	y(n);
+	std::vector<double> A(n);
     std::vector<double> B(n-1);
     std::vector<double> C(n-1);
     std::vector<double> F(n);
@@ -72,7 +75,6 @@ void intergo_interpolation(int n, int t,  double h, double tau, double c, double
 
     double sigma = 0.5;
     double kappa = (sigma*a[n-1]/h)/(c*p*h/(2*tau)+sigma*a[n-1]/n);
-    std::vector<double> a;
     for (int i = 0; i != n; i++)
         a.push_back(K(x + i*h - 0.5*h));
     fout.open("Integtgro_interpolation_mult.txt");
@@ -91,13 +93,13 @@ void intergo_interpolation(int n, int t,  double h, double tau, double c, double
         // инициализация функции правой части
         for (int i = 1; i != n-1; i++)
             F[i] = -c*p*y1[i]*h/tau - (1-sigma)*a[i]*(y1[i+1] - 2 * y1[i] + y[i-1])/h;
-        double mu = (c*p*y1[n-1] *h/(2*tau) + sigma * P(tau*j)+(1-sigma)*(P(tau * (j-1))-(y1[n-1] - y1[n-2])/h))/(c*p*h/(2*tau)+sigma * a[n]/h);
+        double mu = (c*p*y1[n-1] *h/(2*tau) + sigma * P(tau*j,tau)+(1-sigma)*(P(tau * (j-1), tau)-(y1[n-1] - y1[n-2])/h))/(c*p*h/(2*tau)+sigma * a[n]/h);
 
         //передача значений с 1 по n-1, так как они уже определены
         y2 = progon(A, C, B, F, n - 1);
         y2[n-1] = kappa * y2[n-2] + mu;
-        y2[0] = u0(h, L));
-        print_in_file(y2, fout);
+        y2[0] = u0(h, L);
+     //   print_in_file(y2, fout);//??????????
         y1 = y2;
     }
     fout.close();

@@ -7,17 +7,21 @@
 
 #endif //HEAT_VECTOR_NEW_H
 #include <vector>
-#include <math>
+#include <cmath>
 #include <iostream>
-#include <ofstream>
+#include <fstream>
+
+int	dim = 2;
+double	EPS = 1.e-4;
+
 void print(std::vector<double> x)
 {
     for (int i = 0; i!= x.size(); i++)
-        cout << x[i] << '\t';
-    cout << std::endl;
+        std::cout << x[i] << '\t';
+    std::cout << std::endl;
 }
 
-void print_in_file(std::vector<double> x, ofstream fout)
+void print_in_file(std::vector<double> x, std::ofstream fout)
 {
     for (int i = 0; i!= x.size(); i++)
         fout << x[i] << '\t';
