@@ -11,8 +11,7 @@
 #include <iostream>
 #include <fstream>
 
-int	dim = 2;
-double	EPS = 1.e-4;
+double	EPS = 1.e-2;
 
 void print(std::vector<double> x)
 {
@@ -20,7 +19,6 @@ void print(std::vector<double> x)
         std::cout << x[i] << '\t';
     std::cout << std::endl;
 }
-
 void print_in_file(std::vector<double> x, std::ofstream fout)
 {
     for (int i = 0; i!= x.size(); i++)
@@ -75,12 +73,11 @@ double norm(std::vector<double> x)
         sum += (x[i]*x[i]);
     return sqrt(sum);
 }
-
 double	norm(std::vector<double> a, std::vector<double> b)
 {
     double	max;
     max = fabs(a[0] - b[0]);
-    for (int i = 1; i < dim; i++)
+    for (int i = 1; i < a.size(); i++)
         if (fabs(a[i] - b[i]) > max)
             max = fabs(a[i] - b[i]);
     return max;
