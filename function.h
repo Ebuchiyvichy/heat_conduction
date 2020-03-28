@@ -8,62 +8,56 @@
 #endif //HEAT_FUNCTION_H
 #include "vector_new.h"
 
-double K (double x, double x1, double x2, double L)
+double	K(double x, Date my_date)
 {
-    double k1 = 1;
-    double k2 = 0.1;
-    if (0 < x && x < x1)
-        return k1;
-    if (x1 < x && x < x2)
-        return k1 * (x - x2) / (x1 - x2) + k2 * (x - x1) / (x2 - x1);
-	if (x2 < x < L)
-		return k2;
-}
-
-double K (double u)
-{
-    double a = 2;
-    double b = 0.5;
-    double gamma = 3;
-    return (a + b* pow(u, gamma));
-}
-
-double P(double t, double t0, int TEST_P)
-{
-	double Q = 10;
-
-	switch (TEST_P) {
-	case 1:
-		if (t > EPS && t < t0)
-			return Q;
-		else
-			return 0;
-	case 2:
-		if (EPS < t && t < t0)
-			return 2 * Q * t;
-		else
-			return 0;
-	case 3:
-		if (EPS < t && t < t0)
-			return 2 * Q * (t0 - t);
-		else return 0;
-	case 4:
-		if (EPS < t && t < 0.5 * t0)
-			return 2 * Q * t;
-		else if (0.5 * t0 < t && t < t0)
-			return 2 * Q * (t0 - t);
-		else
-			return 0;
-	default:
-		return 0;
+	if (my_date.test == 'a') {
+		if (0 < x && x < my_date.x1)
+			return my_date.k1;
+		if (my_date.x1 < x && x < my_date.x2)
+			return my_date.k1 * (x - my_date.x2) / (my_date.x1 - my_date.x2) + my_date.k2 * (x - my_date.x1) / (my_date.x2 - my_date.x1);
+		if (my_date.x2 < x < my_date.L)
+			return my_date.k2;
 	}
-    
+	else
+    return (my_date.alpha + my_date.beta * pow(x, my_date.gamma));
 }
 
-double u0(double L)
+double P1(double t, Date my_data)
 {
-    double u0 = 0.04;
-    return u0;
+	if (t > EPS && t < my_data.t0)
+		return my_data.Q;
+	else
+		return 0;
+}
+
+double P2(double t, Date my_data)
+{
+	if (EPS < t && t < my_data.t0)
+		return 2 * my_data.Q * t;
+	else
+		return 0;
+}
+
+double P3(double t, Date my_data)
+{
+	if (EPS < t && t < my_data.t0)
+		return 2 * my_data.Q * (my_data.t0 - t);
+	else return 0;
+}
+
+double P4(double t, Date my_data)
+{
+		if (EPS < t && t < 0.5 * my_data.t0)
+			return 2 * my_data.Q * t;
+		else if (0.5 * my_data.t0 < t && t < my_data.t0)
+			return 2 * my_data.Q * (my_data.t0 - t);
+		else
+			return 0;
+}
+
+double	u0(double x, Date my_data)
+{
+	return my_data.u0;
 }
 
 std::vector<double> progon(std::vector<double> a, std::vector<double> b, std::vector<double> c, std::vector<double> f, int n)
@@ -95,18 +89,18 @@ std::vector<double> progon(std::vector<double> a, std::vector<double> b, std::ve
 	std::cout << "c14 " << c[n - 1] << std::endl;
 	std::cout << "beta14 " << beta[n - 1] << std::endl;*/
 	y[n - 1] = (f[n - 1] + a[n - 1] * beta[n - 1]) / (c[n - 1] - a[n - 1] * alpha[n - 1]);
-/*	std::cout << "y" << n - 1 << " = " << y[n - 1] << std::endl;*/
+//	std::cout << "y" << n - 1 << " = " << y[n - 1] << std::endl;
 	for (int i = n - 2; i >= 1; i--) {
 		y[i] = alpha[i + 1] * y[i + 1] + beta[i + 1];
-	//	std::cout << "y" << i << " = " << y[i] << std::endl;
+//		std::cout << "y" << i << " = " << y[i] << std::endl;
 	}
 		return y;
 }
 
-void integro_interpolation(int n, int t,  double h, double tau, double c, double rho, double L, int TEST_P)
+void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, Date my_date)
 {
     std::ofstream		fout;
-	double mu;
+	double				mu;
 	std::vector<double>	a;
 	std::vector<double>	y(n+1);
 	std::vector<double> A(n+1);
@@ -118,12 +112,12 @@ void integro_interpolation(int n, int t,  double h, double tau, double c, double
 	
 	// инициализация начальными данными
 	for (int i = 0; i != n+1; i++)
-		y1[i] = u0(L);
+		y1[i] = my_date.left_boarder(i, my_date);
 
 	double sigma = 0.5;
 	for (int i = 0; i != n+1; i++)
-		a.push_back(K(u0(L) + i * h - 0.5 * h));
-	double kappa = (sigma * a[n - 1] / h) / (c * rho * h / (2 * tau) + sigma * a[n - 1] / h);
+		a.push_back(K(my_date.u0 + i * h - 0.5 * h, my_date));
+	double kappa = (sigma * a[n - 1] / h) / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[n - 1] / h);
 	fout.open("Integtgro_interpolation_mult.txt");
 
 	//коэффициенты прогонки
@@ -133,27 +127,27 @@ void integro_interpolation(int n, int t,  double h, double tau, double c, double
 	{
 		A[i] = sigma / h * a[i];
 		B[i-1] = A[i];
-		C[i-1] = A[i-1] + B[i-1] - c* rho * h/tau;
+		C[i-1] = A[i-1] + B[i-1] - my_date.c* my_date.rho * h/tau;
 	}
-	std::cout << "Koefficients was found\n";
+	std::cout << "Coefficients was found\n";
 
 	//вычисление по временным слоям
 	for (int j = 0; j != t; j++)
 	{
 		// инициализация функции правой части
 		for (int i = 1; i < n; i++) {
-			F[i] = -c * rho * y1[i] * h / tau - (1 - sigma) * a[i] * (y1[i + 1] - 2 * y1[i] + y[i - 1]) / h;
-//			std::cout << "F = " << F[i] << std::endl;
+			F[i] = -my_date.c * my_date.rho * y1[i] * h / tau - (1 - sigma) * a[i] * (y1[i + 1] - 2 * y1[i] + y[i - 1]) / h;
+			std::cout << "F = " << F[i] << std::endl;
 		}
 
-		mu = (c * rho * y1[n] * h / (2 * tau) + sigma * P(tau * j, tau, TEST_P) + 
-			(1 - sigma) * (P(tau * (j - 1), tau, TEST_P) - a[n] * (y1[n] - y1[n-1]) / h))
-			/ (c * rho * h / (2 * tau) + sigma * a[n] / h);
+		mu = (my_date.c * my_date.rho * y1[n] * h / (2 * tau) + sigma * my_date.right_boarder(tau * j, my_date) + 
+			(1 - sigma) * (my_date.right_boarder(tau * (j - 1), my_date) - a[n] * (y1[n] - y1[n-1]) / h))
+			/ (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[n] / h);
 		std::cout << "mu = " << mu << std::endl;
 
         //передача значений с 1 по n-1, так как они уже определены
 		y2 = progon(A, C, B, F, n);
-		y2[0] = u0(L);
+		y2[0] = my_date.left_boarder(0, my_date);
 		y2[n] = kappa * y2[n-1] + mu;
 		//  print_in_file(y2, fout);//??????????
 		for (int i = 0; i != y2.size(); i++)
