@@ -10,11 +10,8 @@
 void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, Date my_date)
 {
     std::ofstream		fout;
-    double				mu;
     std::vector<double>	a;
-    std::vector<double>	y(n+1);
     std::vector<double> A(n+1);
-    std::vectovoid integro_interpolation_t(int n, int t,  double h, double tau, int TEST_P, Date my_date)r<double> B(n);
     std::vector<double> C(n);
     std::vector<double> F(n);
     std::vector<double> y1(n+1);	// значения на текущем временном слое
@@ -27,7 +24,6 @@ void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, Date
     double sigma = 0.5;
     for (int i = 0; i != n+1; i++)
         a.push_back(K(my_date.u0 + i * h - 0.5 * h, my_date));
-    double kappa = (sigma * a[n - 1] / h) / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[n - 1] / h);
     fout.open("Integtgro_interpolation_mult.txt");
 
     //коэффициенты прогонки
@@ -52,17 +48,29 @@ void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, Date
         //передача значений с 1 по n-1, так как они уже определены
         y2 = progon(A, C, B, F, n);
         y2[0] = my_date.left_boarder(0, my_date);
-        if (TEST_P == 1)
+        if ((TEST_P == 1) || (TEST_P == 3)) // TEST_P == 1 - смешанная задача
+                                            // TEST_P == 3 - два потока на концах
         {
-            mu = (my_date.c * my_date.rho * y1[n] * h / (2 * tau) + sigma * my_date.right_boarder(tau * j, my_date) +
+            double kappa = (sigma * a[n - 1] / h) / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[n - 1] / h);
+            double mu = (my_date.c * my_date.rho * y1[n] * h / (2 * tau) + sigma * my_date.right_boarder(tau * j, my_date) +
                   (1 - sigma) * (my_date.right_boarder(tau * (j - 1), my_date) - a[n] * (y1[n] - y1[n-1]) / h))
                  / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[n] / h);
-            std::cout << "mu = " << mu << std::endl;
+            std::cout << "mu1 = " << mu << std::endl;
             y2[n] = kappa * y2[n-1] + mu;
+            if (TEST_P == 3)
+            {
+                kappa = (sigma * a[0] / h) / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[0] / h);
+                mu = (my_date.c * my_date.rho * y1[0] * h / (2 * tau) + sigma * my_date.left_boarder(tau * j, my_date) +
+                              (1 - sigma) * (my_date.left_boarder(tau * (j - 1), my_date) - a[0]*(y1[1] - y1[0]) / h))
+                             / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[0] / h);
+                y2[0] = kappa * y2[n-1] + mu;
+                std::cout << "mu2 = " << mu << std::endl;
+            }
         }
         else if (TEST_P == 2)
             y2[n] = my_date.right_boarder(n*h, my_date);
-        else if (TEST_P == 3)
+
+
 
             //  print_in_file(y2, fout);//??????????
             for (int i = 0; i != y2.size(); i++)
