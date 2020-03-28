@@ -31,7 +31,6 @@ struct Date
 	double	x2 = 2.0 / 3;
 	std::function<double(double, Date)>	left_boarder;
 	std::function<double(double, Date)>	right_boarder;
-	char	test = 'a';
 };
 
 void print(std::vector<double> x)

@@ -10,7 +10,7 @@
 
 double	K(double x, Date my_date)
 {
-	if (my_date.test == 'a') {
+	if (true) {
 		if (0 < x && x < my_date.x1)
 			return my_date.k1;
 		if (my_date.x1 < x && x < my_date.x2)
@@ -67,38 +67,41 @@ double u0_t(double x, Date my_data)
     return my_data.u0 - x*(my_data.L -x);
 }
 
-std::vector<double> progon(std::vector<double> a, std::vector<double> b, std::vector<double> c, std::vector<double> f, int n)
+//левая прогонка
+std::vector<double> progon(std::vector<double> a, std::vector<double> b, std::vector<double> c, std::vector<double> f, int n, double y0)
 {
-	double m;
-	std::vector<double> y(n+1);
-	std::vector<double>	alpha(n);
-	std::vector<double>	beta(n);
+    double m = n-1;
+	std::vector<double> y(n);
+	std::vector<double>	ksi(n-1);
+	std::vector<double>	etta(n-1);
 
-	alpha[2] = b[1] / c[1];
-	beta[2] = f[1] / c[1];
+	ksi[m-2] = a[m-1]/b[m-1];
+	etta[m-2] = - f[m-1]/b[m-1];
 
-    for (int i = 3; i < n; i++)
+    for (int i = m - 2; i >= 1; i--)
 	{
-		alpha[i] = b[i] / (c[i] - a[i] * alpha[i - 1]);
-		beta[i] = (f[i] + a[i] * beta[i - 1]) / (b[i] - a[i] * alpha[i - 1]);
+		ksi[i-1] = a[i] / (b[i] - c[i] * ksi[i]);
+		etta[i-1] = (f[i] + c[i] * etta[i]) / (b[i] - c[i] * ksi[i]);
 	}
-	/*std::cout << "alpha:\t";
+/*	std::cout << "ksi:\t";
 	for (int i = 2; i < n; i++)
-		std::cout << alpha[i] << '\t';
+		std::cout << ksi[i] << '\t';
 	std::cout << std::endl;
-	std::cout << "beta:\t";
+	std::cout << "etta:\t";
 	for (int i = 2; i < n; i++)
-		std::cout << beta[i] << '\t';
+		std::cout << etta[i] << '\t';
 	std::cout << std::endl;
 	std::cout << "f14 " << f[n - 1] << std::endl;
-	std::cout << "alpha14 " << alpha[n - 1] << std::endl;
+	std::cout << "ksi14 " << ksi[n - 1] << std::endl;
 	std::cout << "b14 " << b[n - 1] << std::endl;
 	std::cout << "c14 " << c[n - 1] << std::endl;
-	std::cout << "beta14 " << beta[n - 1] << std::endl;*/
-	y[n - 1] = (f[n - 1] + a[n - 1] * beta[n - 1]) / (c[n - 1] - a[n - 1] * alpha[n - 1]);
+	std::cout << "etta14 " << etta[n - 1] << std::endl;
+ */
+	y[0] = y0;
 //	std::cout << "y" << n - 1 << " = " << y[n - 1] << std::endl;
-	for (int i = n - 2; i >= 1; i--) {
-		y[i] = alpha[i + 1] * y[i + 1] + beta[i + 1];
+	for (int i = 1; i != m-1; i++) {
+        std::cout << i << std::endl;
+		y[i] = ksi[i -1] * y[i - 1] + etta[i - 1];
 //		std::cout << "y" << i << " = " << y[i] << std::endl;
 	}
 		return y;
