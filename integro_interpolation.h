@@ -28,7 +28,7 @@ void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, Date
 	std::cout << std::endl;
     double sigma = 0.5;
 	for (int i = 0; i != n + 1; i++) {
-		a.push_back(K(0 + i * h - 0.5 * h, my_date));
+		a.push_back(K(i * h - 0.5 * h, my_date));
 		std::cout << a[i] << '\t';
 	}
 	std::cout << std::endl;
@@ -69,7 +69,7 @@ void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, Date
                  / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[n-1] / h);
             std::cout << "mu1 = " << mu << std::endl;
             y2[n] = kappa * y2[n-1] + mu;
-            if (TEST_P == 3)
+            if (TEST_P == 3)//из условий потока(?)
             {
                 kappa = (sigma * a[0] / h) / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[0] / h);
                 mu = (my_date.c * my_date.rho * y1[0] * h / (2 * tau) + sigma * my_date.left_boarder(tau * j, my_date) +

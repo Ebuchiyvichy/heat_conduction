@@ -10,7 +10,6 @@
 
 double	K(double x, Date my_date)
 {
-	if (true) {
 		if (0 < x && x < my_date.x1)
 			return my_date.k1;
 		if (my_date.x1 < x && x < my_date.x2) {
@@ -19,9 +18,11 @@ double	K(double x, Date my_date)
 		}
 		if (my_date.x2 < x && x < my_date.L)
 			return my_date.k2;
-	}
-	else
-    return (my_date.alpha + my_date.beta * pow(x, my_date.gamma));
+}
+
+double	K_quasi(double x, Date my_date)
+{
+	return (my_date.alpha + my_date.beta * pow(x, my_date.gamma));
 }
 
 double P1(double t, Date my_data)
