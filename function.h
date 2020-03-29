@@ -13,9 +13,11 @@ double	K(double x, Date my_date)
 	if (true) {
 		if (0 < x && x < my_date.x1)
 			return my_date.k1;
-		if (my_date.x1 < x && x < my_date.x2)
+		if (my_date.x1 < x && x < my_date.x2) {
+			std::cout << "hi!" << std::endl;
 			return my_date.k1 * (x - my_date.x2) / (my_date.x1 - my_date.x2) + my_date.k2 * (x - my_date.x1) / (my_date.x2 - my_date.x1);
-		if (my_date.x2 < x < my_date.L)
+		}
+		if (my_date.x2 < x && x < my_date.L)
 			return my_date.k2;
 	}
 	else
@@ -58,22 +60,22 @@ double P4(double t, Date my_data)
 double	u0(double x, Date my_data)
 {
     if ((x > 0) && (x < my_data.L))
-        return 0;
-    return my_data.u0;
+		return my_data.u0;
+	return 0;
 }
 
 double u0_t(double x, Date my_data)
 {
-    return my_data.u0 - x*(my_data.L -x);
+    return my_data.u0 - x * (my_data.L - x);
 }
 
 //левая прогонка
 std::vector<double> progon(std::vector<double> a, std::vector<double> b, std::vector<double> c, std::vector<double> f, int n, double y0)
 {
-    double m = n-1;
-	std::vector<double> y(n);
-	std::vector<double>	ksi(n-1);
-	std::vector<double>	etta(n-1);
+    double m = n;
+	std::vector<double> y(n+1);
+	std::vector<double>	ksi(n);
+	std::vector<double>	etta(n);
 
 	ksi[m-2] = a[m-1]/b[m-1];
 	etta[m-2] = - f[m-1]/b[m-1];
@@ -100,8 +102,8 @@ std::vector<double> progon(std::vector<double> a, std::vector<double> b, std::ve
 	y[0] = y0;
 //	std::cout << "y" << n - 1 << " = " << y[n - 1] << std::endl;
 	for (int i = 1; i != m-1; i++) {
-        std::cout << i << std::endl;
-		y[i] = ksi[i -1] * y[i - 1] + etta[i - 1];
+//       std::cout << i << std::endl;
+		y[i] = ksi[i - 1] * y[i - 1] + etta[i - 1];
 //		std::cout << "y" << i << " = " << y[i] << std::endl;
 	}
 		return y;

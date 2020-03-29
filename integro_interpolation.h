@@ -17,16 +17,22 @@ void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, Date
     std::vector<double> A(n+1);
     std::vector<double> C(n);
     std::vector<double> F(n);
-    std::vector<double> y1(n);	// значения на текущем временном слое
-    std::vector<double> y2(n);	// следующий временной слой
+    std::vector<double> y1(n+1);	// значения на текущем временном слое
+    std::vector<double> y2(n+1);	// следующий временной слой
 
     // инициализация начальными данными
-    for (int i = 0; i != n; i++)
-        y1[i] = u0_t(i*h, my_date);
-
+	for (int i = 0; i != n; i++) {
+		y1[i] = u0_t(i*h, my_date);
+		std::cout << y1[i] << '\t';
+	}
+	std::cout << std::endl;
     double sigma = 0.5;
-    for (int i = 0; i != n+1; i++)
-        a.push_back(K(my_date.u0 + i * h - 0.5 * h, my_date));
+	for (int i = 0; i != n + 1; i++) {
+		a.push_back(K(0 + i * h - 0.5 * h, my_date));
+		std::cout << a[i] << '\t';
+	}
+	std::cout << std::endl;
+
     fout.open("Integtgro_interpolation_mult.txt");
 
     //коэффициенты прогонки
@@ -44,9 +50,9 @@ void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, Date
     {
 
         // инициализация функции правой части
-        for (int i = 1; i != (n-1); i++) {
+        for (int i = 1; i != n-1; i++) {
             F[i] = my_date.c * my_date.rho * y1[i] * h / tau + (1 - sigma) * a[i] * (y1[i + 1] - 2 * y1[i] + y1[i - 1]) / h;
-         //   std::cout << "F = " << F[i] << std::endl;
+        //   std::cout << "F = " << F[i] << std::endl;
         }
         std::cout << "F is ready" << std::endl;
         //передача значений с 1 по n-1, так как они уже определены
@@ -62,7 +68,7 @@ void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, Date
                   (1 - sigma) * (my_date.right_boarder(tau * (j - 1), my_date) - a[n-1] * (y1[n-1] - y1[n-2]) / h))
                  / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[n-1] / h);
             std::cout << "mu1 = " << mu << std::endl;
-            y2[n-1] = kappa * y2[n-2] + mu;
+            y2[n] = kappa * y2[n-1] + mu;
             if (TEST_P == 3)
             {
                 kappa = (sigma * a[0] / h) / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[0] / h);
