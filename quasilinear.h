@@ -4,7 +4,7 @@
 void quasilinear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 {
 	std::ofstream		fout;
-	std::vector<double>	a;
+	std::vector<double>	a(n+1);
 	std::vector<double> B(n);
 	std::vector<double> A(n + 1);
 	std::vector<double> C(n);
@@ -18,9 +18,11 @@ void quasilinear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 		std::cout << y1[i] << '\t';
 	}
 	std::cout << std::endl;
-	for (int i = 1; i != n + 2; i++) {
-		a.push_back(0.5*(K_quasi(i * h - 0.5 * h, my_date)+ K_quasi((i-1) * h - 0.5 * h, my_date)));
-		std::cout << a[i-1] << '\t';
+
+
+	for (int i = 1; i != n; i++) {
+		a[i] = (0.5*(K_quasi(y1[i], my_date) + K_quasi(y1[i-1], my_date)));
+		std::cout << a[i - 1] << '\t';
 	}
 	std::cout << std::endl;
 
@@ -39,6 +41,19 @@ void quasilinear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 	//вычисление по временным слоям
 	for (int j = 0; j != t; j++)
 	{
+		for (int i = 1; i != n; i++) {
+			a[i] = (0.5*(K_quasi(y1[i], my_date) + K_quasi(y1[i - 1], my_date)));
+		}
+
+		//коэффициенты прогонки
+		A[0] = 0;
+		for (int i = 1; i <= n; i++)
+		{
+			A[i] = a[i] / h;
+			B[i - 1] = A[i];
+			C[i - 1] = A[i - 1] + B[i - 1] + my_date.c* my_date.rho * h / tau;
+		}
+		std::cout << "Coefficients was found\n";
 
 		// инициализация функции правой части
 		for (int i = 1; i != n - 1; i++) {
@@ -78,4 +93,5 @@ void quasilinear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 	}
 	fout.close();
 }
+
 
