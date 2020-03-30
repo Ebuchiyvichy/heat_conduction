@@ -24,7 +24,7 @@ void integro_interpolation(int n, int T,  double h, double tau, int TEST_P, doub
 	str += std::to_string(sigma) + ".txt";
 
     // инициализация начальными данными
-	for (int i = 0; i != n; i++)
+	for (int i = 0; i <= n; i++)
 		y1[i] = u0_t(i*h, my_date);
 	for (int i = 0; i != n + 1; i++)
 		a.push_back(K(i * h - 0.5 * h, my_date));
@@ -71,10 +71,10 @@ void integro_interpolation(int n, int T,  double h, double tau, int TEST_P, doub
             }
         }
         else if (TEST_P == 2)
-            y2[n] = my_date.right_boarder(n*h, my_date);
+            y2[n] = my_date.left_boarder(n*h, my_date);
 
-            for (int i = 0; i != y2.size(); i++)
-              fout << j << '\t' << i << '\t' << y2[i] << '\n';
+            for (int i = 0; i != y1.size(); i++)
+              fout << j << '\t' << i * h << '\t' << y1[i] << '\n';
         y1 = y2;
     }
     fout.close();
