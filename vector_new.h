@@ -29,7 +29,7 @@ struct Date
 	double	k1 = 1;
 	double	k2 = 0.1;
 	double	x1 = 1.0 / 3;
-	double	x2 = /*2.0 / 3*/0.5;
+	double	x2 = 2.0 / 3;
 	std::function<double(double, Date)>	left_boarder;
 	std::function<double(double, Date)>	right_boarder;
 };
@@ -86,7 +86,6 @@ std::vector<double> operator / (std::vector<double> a, double b)
 }
 
 // нормы векторов
-
 double norm(std::vector<double> x)
 {
     double sum = 0;

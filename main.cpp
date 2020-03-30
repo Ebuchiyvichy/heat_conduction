@@ -14,7 +14,7 @@ int main()
 	std::cout << "Variant 2 (a)" << std::endl;
 	DATA.left_boarder = &u0;
 	DATA.right_boarder = &P2;
-	integro_interpolation(DATA.L / h, T, h, tau, 2, 0, DATA);
+//	integro_interpolation(DATA.L / h, T, h, tau, 2, 0, DATA);
 	integro_interpolation(DATA.L / h, T, h, tau, 2, 0.5, DATA);
 	integro_interpolation(DATA.L / h, T, h, tau, 2, 1, DATA);
 

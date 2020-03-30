@@ -81,28 +81,25 @@ std::vector<double> progon(std::vector<double> a, std::vector<double> b, std::ve
 		ksi[i] = a[i] / (b[i] - c[i] * ksi[i+1]);
 		etta[i] = (f[i] + c[i] * etta[i+1]) / (b[i] - c[i] * ksi[i+1]);
 	}
-/*	std::cout << "ksi:\t";
-	for (int i = 2; i < n; i++)
+	y[0] = y0;
+	/*std::cout << "ksi\t";
+	for (int i = 0; i < n; i++)
 		std::cout << ksi[i] << '\t';
 	std::cout << std::endl;
-	std::cout << "etta:\t";
-	for (int i = 2; i < n; i++)
+	std::cout << std::endl;
+	std::cout << "eta\t";
+	for (int i = 0; i < n; i++)
 		std::cout << etta[i] << '\t';
 	std::cout << std::endl;
-	std::cout << "f14 " << f[n - 1] << std::endl;
-	std::cout << "ksi14 " << ksi[n - 1] << std::endl;
-	std::cout << "b14 " << b[n - 1] << std::endl;
-	std::cout << "c14 " << c[n - 1] << std::endl;
-	std::cout << "etta14 " << etta[n - 1] << std::endl;
- */
-	y[0] = y0;
-//	std::cout << "y" << n - 1 << " = " << y[n - 1] << std::endl;
-	for (int i = 1; i != n; i++) {
-//       std::cout << i << std::endl;
+	std::cout << std::endl;
+	std::cout << "y\t";*/
+	for (int i = 1; i != n; i++)
+	{
 		y[i] = ksi[i] * y[i - 1] + etta[i];
-//		std::cout << "y" << i << " = " << y[i] << std::endl;
+	//	std::cout << y[i] << '\t';
 	}
-		return y;
+	std::cout << std::endl;
+	return y;
 }
 
 

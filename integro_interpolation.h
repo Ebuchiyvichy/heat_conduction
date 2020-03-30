@@ -14,9 +14,9 @@ void integro_interpolation(int n, int T,  double h, double tau, int TEST_P, doub
     std::ofstream		fout;
     std::vector<double>	a;
     std::vector<double> B(n);
-    std::vector<double> A(n+1);
-    std::vector<double> C(n);
-    std::vector<double> F(n);
+    std::vector<double> A(n+2);
+    std::vector<double> C(n+1);
+    std::vector<double> F(n+1);
     std::vector<double> y1(n+1);	// значения на текущем временном слое
     std::vector<double> y2(n+1);	// следующий временной слой
 	std::string			str = "Integtgro_interpolation_mult_";
@@ -37,7 +37,7 @@ void integro_interpolation(int n, int T,  double h, double tau, int TEST_P, doub
     {
         A[i] = sigma / h * a[i];
         B[i-1] = A[i];
-        C[i-1] = A[i-1] + B[i-1] + my_date.c * my_date.rho * h/tau;
+        C[i-1] = A[i-1] + B[i-1] + my_date.c * my_date.rho * h / tau;
     }
     std::cout << "Coefficients was found\n";
 
@@ -46,7 +46,7 @@ void integro_interpolation(int n, int T,  double h, double tau, int TEST_P, doub
     {
 		std::cout << j << std::endl;
         // инициализация функции правой части
-        for (int i = 1; i != n-1; i++)
+        for (int i = 1; i != n; i++)
             F[i] = my_date.c * my_date.rho * y1[i] * h / tau + (1 - sigma) * a[i] * (y1[i + 1] - 2 * y1[i] + y1[i - 1]) / h;
 
         //передача значений с 1 по n-1, так как они уже определены
