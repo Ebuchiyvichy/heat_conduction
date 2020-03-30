@@ -9,7 +9,7 @@ int main()
 	Date	DATA;
 	double	h = 0.03;
 	double	tau = 0.01;
-	double	T = 2;
+	double	T = 1;
 
 	std::cout << "Variant 2 (a)" << std::endl;
 	DATA.left_boarder = &u0;
