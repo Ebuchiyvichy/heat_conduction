@@ -12,10 +12,8 @@ double	K(double x, Date my_date)
 {
 		if (0 < x && x < my_date.x1)
 			return my_date.k1;
-		if (my_date.x1 < x && x < my_date.x2) {
-			std::cout << "hi!" << std::endl;
+		if (my_date.x1 < x && x < my_date.x2)
 			return my_date.k1 * (x - my_date.x2) / (my_date.x1 - my_date.x2) + my_date.k2 * (x - my_date.x1) / (my_date.x2 - my_date.x1);
-		}
 		if (my_date.x2 < x && x < my_date.L)
 			return my_date.k2;
 }

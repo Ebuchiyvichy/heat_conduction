@@ -9,7 +9,7 @@
 
 #include "function.h"
 
-void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, double sigma, Date my_date)
+void integro_interpolation(int n, int T,  double h, double tau, int TEST_P, double sigma, Date my_date)
 {
     std::ofstream		fout;
     std::vector<double>	a;
@@ -37,32 +37,29 @@ void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, doub
     {
         A[i] = sigma / h * a[i];
         B[i-1] = A[i];
-        C[i-1] = A[i-1] + B[i-1] + my_date.c* my_date.rho * h/tau;
+        C[i-1] = A[i-1] + B[i-1] + my_date.c * my_date.rho * h/tau;
     }
     std::cout << "Coefficients was found\n";
 
     //вычисление по временным слоям
-    for (int j = 0; j != t; j++)
+    for (double j = 0; j <= T; j += tau)
     {
-
+		std::cout << j << std::endl;
         // инициализация функции правой части
-        for (int i = 1; i != n-1; i++) {
+        for (int i = 1; i != n-1; i++)
             F[i] = my_date.c * my_date.rho * y1[i] * h / tau + (1 - sigma) * a[i] * (y1[i + 1] - 2 * y1[i] + y1[i - 1]) / h;
-        }
-        std::cout << "F is ready" << std::endl;
+
         //передача значений с 1 по n-1, так как они уже определены
         y2 = progon(A, C, B, F, n, my_date.left_boarder(0, my_date));
-        std::cout << "ok\n" << std::endl;
-        //y2[0] = my_date.left_boarder(0, my_date);
+
+		//y2[0] = my_date.left_boarder(0, my_date);
         if ((TEST_P == 1) || (TEST_P == 3)) // TEST_P == 1 - смешанная задача
                                             // TEST_P == 3 - два потока на концах
         {
-            std::cout << "progon is ready" << std::endl;
             double kappa = (sigma * a[n - 1] / h) / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[n - 2] / h);
             double mu = (my_date.c * my_date.rho * y1[n-1] * h / (2 * tau) + sigma * my_date.right_boarder(tau * j, my_date) +
                   (1 - sigma) * (my_date.right_boarder(tau * (j - 1), my_date) - a[n-1] * (y1[n-1] - y1[n-2]) / h))
                  / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[n-1] / h);
-            std::cout << "mu1 = " << mu << std::endl;
             y2[n] = kappa * y2[n-1] + mu;
             if (TEST_P == 3)//из условий потока(?)
             {
@@ -71,7 +68,6 @@ void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, doub
                               (1 - sigma) * (my_date.left_boarder(tau * (j - 1), my_date) - a[0]*(y1[1] - y1[0]) / h))
                              / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[0] / h);
                 y2[0] = kappa * y2[1] + mu;
-                std::cout << "mu2 = " << mu << std::endl;
             }
         }
         else if (TEST_P == 2)

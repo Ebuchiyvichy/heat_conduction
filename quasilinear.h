@@ -41,7 +41,7 @@ void quasilinear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 	std::cout << "Coefficients was found\n";
 
 	//вычисление по временным слоям
-	for (int j = 0; j != t; j++)
+	for (double j = 0; j <= t; j += tau)
 	{
 		for (int i = 1; i != n; i++) {
 			a[i] = (0.5*(K_quasi(y1[i], my_date) + K_quasi(y1[i - 1], my_date)));
@@ -133,7 +133,7 @@ void non_linear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 	std::cout << "Coefficients was found\n";
 
 	//вычисление по временным слоям
-	for (int j = 0; j != t; j++)
+	for (double j = 0; j <= t; j += tau)
 	{
 		for (int k = 0; k != M; k++) {
 			for (int i = 1; i != n; i++) {
