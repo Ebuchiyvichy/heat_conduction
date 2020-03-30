@@ -9,7 +9,7 @@
 
 #include "function.h"
 
-void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, Date my_date)
+void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, double sigma, Date my_date)
 {
     std::ofstream		fout;
     std::vector<double>	a;
@@ -19,21 +19,17 @@ void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, Date
     std::vector<double> F(n);
     std::vector<double> y1(n+1);	// значения на текущем временном слое
     std::vector<double> y2(n+1);	// следующий временной слой
+	std::string			str = "Integtgro_interpolation_mult_";
+
+	str += std::to_string(sigma) + ".txt";
 
     // инициализация начальными данными
-	for (int i = 0; i != n; i++) {
+	for (int i = 0; i != n; i++)
 		y1[i] = u0_t(i*h, my_date);
-		std::cout << y1[i] << '\t';
-	}
-	std::cout << std::endl;
-    double sigma = 0.5;
-	for (int i = 0; i != n + 1; i++) {
+	for (int i = 0; i != n + 1; i++)
 		a.push_back(K(i * h - 0.5 * h, my_date));
-		std::cout << a[i] << '\t';
-	}
-	std::cout << std::endl;
 
-    fout.open("Integtgro_interpolation_mult.txt");
+    fout.open(str);
 
     //коэффициенты прогонки
     A[0] = 0;
@@ -52,7 +48,6 @@ void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, Date
         // инициализация функции правой части
         for (int i = 1; i != n-1; i++) {
             F[i] = my_date.c * my_date.rho * y1[i] * h / tau + (1 - sigma) * a[i] * (y1[i + 1] - 2 * y1[i] + y1[i - 1]) / h;
-        //   std::cout << "F = " << F[i] << std::endl;
         }
         std::cout << "F is ready" << std::endl;
         //передача значений с 1 по n-1, так как они уже определены
@@ -85,7 +80,6 @@ void integro_interpolation(int n, int t,  double h, double tau, int TEST_P, Date
             for (int i = 0; i != y2.size(); i++)
               fout << j << '\t' << i << '\t' << y2[i] << '\n';
         y1 = y2;
-        std::cout << j << std::endl;
     }
     fout.close();
 }

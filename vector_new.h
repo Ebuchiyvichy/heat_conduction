@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <functional>
+#include <string>;
 
 double	EPS = 1.e-2;
 
