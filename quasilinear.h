@@ -15,21 +15,13 @@ void quasilinear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 	std::vector<double> y2(n + 1);	// следующий временной слой
 
 	// инициализация начальными данными
-	for (int i = 0; i != n; i++) {
+	for (int i = 0; i != n+1; i++)
 		y1[i] = u0_t(i*h, my_date);
-		std::cout << y1[i] << '\t';
-	}
-	std::cout << std::endl;
 
-
-	for (int i = 1; i != n; i++) {
+	for (int i = 1; i != n; i++)
 		a[i] = (0.5*(K_quasi(y1[i], my_date) + K_quasi(y1[i-1], my_date)));
-		std::cout << a[i - 1] << '\t';
-	}
-	std::cout << std::endl;
 
 	fout.open("Quasilinear.txt");
-
 	//коэффициенты прогонки
 	A[0] = 0;
 	for (int i = 1; i <= n; i++)
@@ -43,10 +35,8 @@ void quasilinear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 	//вычисление по временным слоям
 	for (double j = 0; j <= t; j += tau)
 	{
-		for (int i = 1; i != n; i++) {
+		for (int i = 1; i != n; i++)
 			a[i] = (0.5*(K_quasi(y1[i], my_date) + K_quasi(y1[i - 1], my_date)));
-		}
-
 		//коэффициенты прогонки
 		A[0] = 0;
 		for (int i = 1; i <= n; i++)
@@ -58,14 +48,10 @@ void quasilinear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 		std::cout << "Coefficients was found\n";
 
 		// инициализация функции правой части
-		for (int i = 1; i != n - 1; i++) {
+		for (int i = 1; i != n - 1; i++)
 			F[i] = my_date.c * my_date.rho * y1[i] * h / tau;
-			//   std::cout << "F = " << F[i] << std::endl;
-		}
-		std::cout << "F is ready" << std::endl;
 		//передача значений с 1 по n-1, так как они уже определены
 		y2 = progon(A, C, B, F, n, my_date.left_boarder(0, my_date));
-		std::cout << "ok\n" << std::endl;
 		//y2[0] = my_date.left_boarder(0, my_date);
 		if ((TEST_P == 1) || (TEST_P == 3)) // TEST_P == 1 - смешанная задача
 											// TEST_P == 3 - два потока на концах
@@ -86,10 +72,10 @@ void quasilinear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 			}
 		}
 		else if (TEST_P == 2)
-			y2[n] = my_date.right_boarder(n*h, my_date);
+			y2[n] = my_date.left_boarder(n*h, my_date);
 
-		for (int i = 0; i != y2.size(); i++)
-			fout << j << '\t' << i << '\t' << y2[i] << '\n';
+		for (int i = 0; i != y1.size(); i++)
+			fout << j << '\t' << i * h << '\t' << y1[i] << '\n';
 		y1 = y2;
 		std::cout << j << std::endl;
 	}
@@ -109,16 +95,11 @@ void non_linear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 	std::vector<double> y_tmp(n + 1);	// вспомогательный вектор для выполнения итераций
 
 	// инициализация начальными данными
-	for (int i = 0; i != n; i++) {
-		y_tmp[i] = u0_t(i*h, my_date);
-		std::cout << y1[i] << '\t';
-	}
-	std::cout << std::endl;
+	for (int i = 0; i <= n; i++)
+		y1[i] = u0_t(i*h, my_date);
 
-
-	for (int i = 1; i != n; i++) {
-		a[i] = (0.5*(K_quasi(y_tmp[i], my_date) + K_quasi(y_tmp[i - 1], my_date)));
-	}
+	for (int i = 1; i != n+1; i++)
+		a[i] = (0.5*(K_quasi(y1[i], my_date) + K_quasi(y1[i - 1], my_date)));
 
 	fout.open("Non_linear.txt");
 
@@ -136,9 +117,8 @@ void non_linear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 	for (double j = 0; j <= t; j += tau)
 	{
 		for (int k = 0; k != M; k++) {
-			for (int i = 1; i != n; i++) {
-				a[i] = (0.5*(K_quasi(y_tmp[i], my_date) + K_quasi(y_tmp[i - 1], my_date)));
-			}
+			for (int i = 1; i != n+1; i++)
+				a[i] = (0.5*(K_quasi(y1[i], my_date) + K_quasi(y1[i - 1], my_date)));
 
 			//коэффициенты прогонки
 			A[0] = 0;
@@ -148,17 +128,12 @@ void non_linear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 				B[i - 1] = A[i];
 				C[i - 1] = A[i - 1] + B[i - 1] + my_date.c* my_date.rho * h / tau;
 			}
-			std::cout << "Coefficients was found\n";
 
 			// инициализация функции правой части
-			for (int i = 1; i != n - 1; i++) {
-				F[i] = my_date.c * my_date.rho * y_tmp[i] * h / tau;
-				//   std::cout << "F = " << F[i] << std::endl;
-			}
-			std::cout << "F is ready" << std::endl;
+			for (int i = 1; i != n; i++)
+				F[i] = my_date.c * my_date.rho * y1[i] * h / tau;
 			//передача значений с 1 по n-1, так как они уже определены
-			y1 = progon(A, C, B, F, n, my_date.left_boarder(0, my_date));
-			std::cout << "ok\n" << std::endl;
+			y_tmp = progon(A, C, B, F, n, my_date.left_boarder(0, my_date));
 			//y2[0] = my_date.left_boarder(0, my_date);
 			if ((TEST_P == 1) || (TEST_P == 3)) // TEST_P == 1 - смешанная задача
 												// TEST_P == 3 - два потока на концах
@@ -179,14 +154,11 @@ void non_linear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 				}
 			}
 			else if (TEST_P == 2)
-				y1[n] = my_date.right_boarder(n*h, my_date);
-
-			for (int i = 0; i != y1.size(); i++)
-				fout << j << '\t' << i << '\t' << y1[i] << '\n';
-			y_tmp = y1;
+				y_tmp[n] = my_date.left_boarder(n*h, my_date);
+			y1 = y_tmp;
 		}
-		y1 = y2;
-		std::cout << j << std::endl;
+		for (int i = 0; i != y1.size(); i++)
+			fout << j << '\t' << i * h << '\t' << y1[i] << '\n';
 	}
 	fout.close();
 }

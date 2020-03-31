@@ -23,7 +23,7 @@ double	K_quasi(double x, Date my_date)
 	return (my_date.alpha + my_date.beta * pow(x, my_date.gamma));
 }
 
-double P1(double t, Date my_data)
+double	P1(double t, Date my_data)
 {
 	if (t > EPS && t < my_data.t0)
 		return my_data.Q;
@@ -31,7 +31,7 @@ double P1(double t, Date my_data)
 		return 0;
 }
 
-double P2(double t, Date my_data)
+double	P2(double t, Date my_data)
 {
 	if (EPS < t && t < my_data.t0)
 		return 2 * my_data.Q * t;
@@ -39,14 +39,14 @@ double P2(double t, Date my_data)
 		return 0;
 }
 
-double P3(double t, Date my_data)
+double	P3(double t, Date my_data)
 {
 	if (EPS < t && t < my_data.t0)
 		return 2 * my_data.Q * (my_data.t0 - t);
 	else return 0;
 }
 
-double P4(double t, Date my_data)
+double	P4(double t, Date my_data)
 {
 		if (EPS < t && t < 0.5 * my_data.t0)
 			return 2 * my_data.Q * t;
@@ -61,7 +61,7 @@ double	u0(double x, Date my_data)
 	return my_data.u0;
 }
 
-double u0_t(double x, Date my_data)
+double	u0_t(double x, Date my_data)
 {
     return my_data.u0 - x * (my_data.L - x);
 }
