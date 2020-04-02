@@ -11,14 +11,16 @@
 #include <iostream>
 #include <fstream>
 #include <functional>
+#include <string>;
 
 double	EPS = 1.e-2;
+double PI = 3.1415926535;
 
 struct Date
 {
-	double	t0 = 0.5;
+	double	t0 = 1;
 	double	Q = 10;
-	double	L = 1;
+	double	L = PI;
 	double	u0 = 0.1;
 	double	alpha = 2;
 	double	beta = 0.5;
@@ -28,7 +30,7 @@ struct Date
 	double	k1 = 1;
 	double	k2 = 0.1;
 	double	x1 = 1.0 / 3;
-	double	x2 = 2.0 / 3;
+	double	x2 = 4.0 / 5;
 	std::function<double(double, Date)>	left_boarder;
 	std::function<double(double, Date)>	right_boarder;
 };
@@ -85,7 +87,6 @@ std::vector<double> operator / (std::vector<double> a, double b)
 }
 
 // нормы векторов
-
 double norm(std::vector<double> x)
 {
     double sum = 0;
