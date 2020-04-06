@@ -13,7 +13,7 @@
 #include <functional>
 #include <string>;
 
-double	EPS = 1.e-2;
+double	EPS = 1.e-3;
 double PI = 3.1415926535;
 
 struct Date

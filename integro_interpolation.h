@@ -9,7 +9,7 @@
 
 #include "function.h"
 
-void integro_interpolation(int n, int T,  double h, double tau, int TEST_P, double sigma, Date my_date)
+std::vector<double> integro_interpolation(int n, double T,  double h, double tau, int TEST_P, double sigma, Date my_date)
 {
     std::ofstream		fout;
     std::vector<double>	a(n+1);
@@ -40,7 +40,7 @@ void integro_interpolation(int n, int T,  double h, double tau, int TEST_P, doub
         C[i-1] = A[i-1] + B[i-1] + my_date.c * my_date.rho * h / tau;
     }
     std::cout << "Coefficients was found\n";
-
+    std::vector<double> tmp(n);
     //вычисление по временным слоям
     for (double j = 0; j <= T; j += tau)
     {
@@ -73,9 +73,10 @@ void integro_interpolation(int n, int T,  double h, double tau, int TEST_P, doub
         else if (TEST_P == 2)
             y2[n] = my_date.right_boarder(my_date.L, my_date);
 
-            for (int i = 0; i != y1.size(); i++)
-              fout << j << '\t' << i * h << '\t' << y1[i] << '\n';
+        for (int i = 0; i != y1.size(); i++)
+            fout << j << '\t' << i * h << '\t' << y1[i] << '\n';
         y1 = y2;
     }
     fout.close();
+    return y2;
 }
