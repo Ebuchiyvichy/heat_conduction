@@ -3,7 +3,7 @@
 
 int M = 3;
 
-void quasilinear(int n, int t, double h, double tau, int TEST_P, Date my_date)
+std::vector<double> quasilinear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 {
 	std::ofstream		fout;
 	std::vector<double>	a(n+1);
@@ -72,7 +72,7 @@ void quasilinear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 			}
 		}
 		else if (TEST_P == 2)
-			y2[n] = my_date.left_boarder(n*h, my_date);
+			y2[n] = my_date.right_boarder(n*h, my_date);
 
 		for (int i = 0; i != y1.size(); i++)
 			fout << j << '\t' << i * h << '\t' << y1[i] << '\n';
@@ -80,9 +80,10 @@ void quasilinear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 		std::cout << j << std::endl;
 	}
 	fout.close();
+	return y1;
 }
 
-void non_linear(int n, int t, double h, double tau, int TEST_P, Date my_date)
+std::vector<double> non_linear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 {
 	std::ofstream		fout;
 	std::vector<double>	a(n + 1);
@@ -154,11 +155,12 @@ void non_linear(int n, int t, double h, double tau, int TEST_P, Date my_date)
 				}
 			}
 			else if (TEST_P == 2)
-				y_tmp[n] = my_date.left_boarder(n*h, my_date);
+				y_tmp[n] = my_date.right_boarder(n*h, my_date);
 			y1 = y_tmp;
 		}
 		for (int i = 0; i != y1.size(); i++)
 			fout << j << '\t' << i * h << '\t' << y1[i] << '\n';
 	}
 	fout.close();
+	return y1;
 }

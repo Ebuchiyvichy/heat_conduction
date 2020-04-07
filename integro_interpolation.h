@@ -78,5 +78,5 @@ std::vector<double> integro_interpolation(int n, double T,  double h, double tau
         y1 = y2;
     }
     fout.close();
-    return y2;
+    return y1;
 }

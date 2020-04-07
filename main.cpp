@@ -23,7 +23,7 @@ int main()
 	/*TEST_P == 1 - right edge with flux, left with temporary temperature
 	  TEST_P == 2 - temporary temperature
       TEST_P == 3 - flux on edges*/
-	error_check(0.01, 0.05, 0.5, 2, DATA);
+	error_check(0.01, 0.05, 1, 2, DATA);
 	system("pause");
 	return (0);
 }

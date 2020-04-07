@@ -22,19 +22,61 @@ void error_check(double h, double tau, double sigma, int TEST_P,  Date DATA)
     std::ofstream fout;
     double	temp;
     fout.open("Error_file.txt");
-    fout << "Integrointerpolation \n";
+    fout << "\n Integrointerpolation \n";
     int dim = 2;
     double T = 0.05;
     std::cout << "Error is ready\n";
-    std::vector<double> tmp1(DATA.L / h);
-    std::vector<double> tmp2(DATA.L / (h/2));
-    std::vector<double> tmp3(DATA.L / (h/4));
-    tmp1 = integro_interpolation(DATA.L / h , T, h, tau, 2, 0.75, DATA);
-    tmp2 = integro_interpolation(DATA.L * 2 / h , T, h / 2, tau / 4, 2, 0.75, DATA);
-    double n = fabs(tmp1[10] -tmp2[10]);
-    fout << n <<'\t';
-    tmp3 = integro_interpolation(DATA.L * 4 / h , T, h / 4, tau / 16, 2, 0.75, DATA);
-    fout << n / fabs(tmp2[10] - tmp3[10]) << '\t' << log( n/fabs(tmp2[10] -tmp3[10]))/log(2) << '\n';
-    fout << fabs(tmp2[10] -tmp3[10]);
+    double f0 = fabs(integro_interpolation(DATA.L   / h , T, h, tau, TEST_P, sigma, DATA)[10] -
+                     integro_interpolation(DATA.L *2/ h , T, h/(2), tau/(2), TEST_P, sigma, DATA)[10]);
+
+    if (true)//(fabs(sigma - 0.5) >= EPS)
+    {
+        for (int i = 1; i <= 8; i += 2)
+        {
+            fout <<  f0 << '\t';
+
+            double f1 = fabs(integro_interpolation(DATA.L *2*i/ h , T, h/(2*i), tau/(2*i), TEST_P, sigma, DATA)[10] -
+                    integro_interpolation(DATA.L *4*i/ h , T, h/(4*i), tau/(4*i), TEST_P, sigma, DATA)[10]);
+            fout << f0/f1 << '\t' << log(f0)/log(f1) << '\n';
+            f0 = f1;
+        }
+    }
+    fout << "\n Quasi \n";
+    std::cout << "Error is ready\n";
+    f0 = fabs(quasilinear(DATA.L   / h , T, h, tau, TEST_P, DATA)[10] -
+                      quasilinear(DATA.L *2/ h , T, h/(2), tau/(2), TEST_P, DATA)[10]);
+
+    if (true)//(fabs(sigma - 0.5) >= EPS)
+    {
+        for (int i = 1; i <= 8; i += 2)
+        {
+            fout <<  f0 << '\t';
+
+            double f1 = fabs(quasilinear(DATA.L *2*i/ h , T, h/(2*i), tau/(2*i), TEST_P, DATA)[10] -
+                                     quasilinear(DATA.L *4*i/ h , T, h/(4*i), tau/(4*i), TEST_P, DATA)[10]);
+            fout << f0/f1 << '\t' << log(f0)/log(f1) << '\n';
+            f0 = f1;
+        }
+    }
+    fout << "\n Nonlinear \n";
+    std::cout << "Error is ready\n";
+    f0 = fabs(non_linear(DATA.L   / h , T, h, tau, TEST_P, DATA)[10] -
+                      non_linear(DATA.L *2/ h , T, h/(2), tau/(2), TEST_P, DATA)[10]);
+
+    if (true)//(fabs(sigma - 0.5) >= EPS)
+    {
+        for (int i = 1; i <= 8; i += 2)
+        {
+            fout <<  f0 << '\t';
+
+            double f1 = fabs(non_linear(DATA.L *2*i/ h , T, h/(2*i), tau/(2*i), TEST_P, DATA)[10] -
+                                     non_linear(DATA.L *4*i/ h , T, h/(4*i), tau/(4*i), TEST_P, DATA)[10]);
+            fout << f0/f1 << '\t' << log(f0)/log(f1) << '\n';
+            f0 = f1;
+        }
+    }
+
+
     fout.close();
+
 }
