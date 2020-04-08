@@ -64,13 +64,14 @@ double	u0(double x, Date my_data)
 		return my_data.u0;
 	else if (fabs(my_data.L-x)<= EPS)
 		return my_data.u0;*/
-	return 0;
+	return 10 * sqrt(x);
 }
 
 double	u0_t(double x, Date my_data)
 {
     //return my_data.u0 - x * (my_data.L - x);
-    return sin(x);
+    //return sin(x);
+	return 0;
 }
 
 //левая прогонка
@@ -89,7 +90,6 @@ std::vector<double> progon(std::vector<double> a, std::vector<double> b, std::ve
 		etta[i] = (f[i] + c[i] * etta[i+1]) / (b[i] - c[i] * ksi[i+1]);
 	}
 	y[0] = y0;
-    y[n] = y0;
 
 	for (int i = 1; i != n; i++)
 	{

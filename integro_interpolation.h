@@ -49,27 +49,27 @@ std::vector<double> integro_interpolation(int n, double T,  double h, double tau
             F[i] = my_date.c * my_date.rho * y1[i] * h / tau + (1 - sigma) * a[i] * (y1[i + 1] - 2 * y1[i] + y1[i - 1]) / h;
 
         //передача значений с 1 по n-1, так как они уже определены
-        y2 = progon(A, C, B, F, n, my_date.left_boarder(0, my_date));
+        y2 = progon(A, C, B, F, n, my_date.left_boarder(j, my_date));
 
         if ((TEST_P == 1) || (TEST_P == 3)) // TEST_P == 1 - смешанная задача
                                             // TEST_P == 3 - два потока на концах
         {
             double kappa = (sigma * a[n - 1] / h) / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[n - 2] / h);
-            double mu = (my_date.c * my_date.rho * y1[n-1] * h / (2 * tau) + sigma * my_date.right_boarder(tau * j, my_date) +
-                  (1 - sigma) * (my_date.right_boarder(tau * (j - 1), my_date) - a[n-1] * (y1[n-1] - y1[n-2]) / h))
+            double mu = (my_date.c * my_date.rho * y1[n-1] * h / (2 * tau) + sigma * my_date.right_boarder(j, my_date) +
+                  (1 - sigma) * (my_date.right_boarder((j - tau), my_date) - a[n-1] * (y1[n-1] - y1[n-2]) / h))
                  / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[n-1] / h);
             y2[n] = kappa * y2[n-1] + mu;
             if (TEST_P == 3)//из условий потока(?)
             {
                 kappa = (sigma * a[0] / h) / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[0] / h);
-                mu = (my_date.c * my_date.rho * y1[0] * h / (2 * tau) + sigma * my_date.left_boarder(tau * j, my_date) +
-                              (1 - sigma) * (my_date.left_boarder(tau * (j - 1), my_date) - a[0]*(y1[1] - y1[0]) / h))
+                mu = (my_date.c * my_date.rho * y1[0] * h / (2 * tau) + sigma * my_date.left_boarder(j, my_date) +
+                              (1 - sigma) * (my_date.left_boarder(j - tau, my_date) - a[0]*(y1[1] - y1[0]) / h))
                              / (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[0] / h);
                 y2[0] = kappa * y2[1] + mu;
             }
         }
         else if (TEST_P == 2)
-            y2[n] = my_date.right_boarder(my_date.L, my_date);
+            y2[n] = my_date.right_boarder(j, my_date);
 
         for (int i = 0; i != y1.size(); i++)
             fout << j << '\t' << i * h << '\t' << y1[i] << '\n';

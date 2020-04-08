@@ -20,11 +20,11 @@ struct Date
 {
 	double	t0 = 1;
 	double	Q = 10;
-	double	L = PI;
+	double	L = 10;
 	double	u0 = 0.1;
-	double	alpha = 2;
+	double	alpha = 0;
 	double	beta = 0.5;
-	double	gamma = 3;
+	double	gamma = 2;
 	double	c = 1;
 	double	rho = 1;
 	double	k1 = 1;
