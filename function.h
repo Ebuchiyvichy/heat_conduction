@@ -60,15 +60,11 @@ double	P4(double t, Date my_data)
 
 double	u0(double x, Date my_data)
 {
-    /*
-    if (fabs(x-0) <= EPS)
-	    return my_data.u0;
-    else if (fabs(my_data.L-x)<= EPS)
-        return my_data.u0;
-    */
-    return 0;
-
-
+	/*if (fabs(x-0) <= EPS)
+		return my_data.u0;
+	else if (fabs(my_data.L-x)<= EPS)
+		return my_data.u0;*/
+	return 0;
 }
 
 double	u0_t(double x, Date my_data)
@@ -94,24 +90,12 @@ std::vector<double> progon(std::vector<double> a, std::vector<double> b, std::ve
 	}
 	y[0] = y0;
     y[n] = y0;
-	/*std::cout << "ksi\t";
-	for (int i = 0; i < n; i++)
-		std::cout << ksi[i] << '\t';
-	std::cout << std::endl;
-	std::cout << std::endl;
-	std::cout << "eta\t";
-	for (int i = 0; i < n; i++)
-		std::cout << etta[i] << '\t';
-	std::cout << std::endl;
-	std::cout << std::endl;
-	std::cout << "y\t";*/
+
 	for (int i = 1; i != n; i++)
 	{
 		y[i] = ksi[i] * y[i-1] + etta[i];
 	//	std::cout << y[i] << '\t';
 	}
-
-	std::cout << std::endl;
 	return y;
 }
 

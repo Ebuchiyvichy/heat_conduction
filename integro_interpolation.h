@@ -44,7 +44,6 @@ std::vector<double> integro_interpolation(int n, double T,  double h, double tau
     //вычисление по временным слоям
     for (double j = 0; j <= T; j += tau)
     {
-		std::cout << j << std::endl;
         // инициализация функции правой части
         for (int i = 1; i != n; i++)
             F[i] = my_date.c * my_date.rho * y1[i] * h / tau + (1 - sigma) * a[i] * (y1[i + 1] - 2 * y1[i] + y1[i - 1]) / h;
@@ -52,7 +51,6 @@ std::vector<double> integro_interpolation(int n, double T,  double h, double tau
         //передача значений с 1 по n-1, так как они уже определены
         y2 = progon(A, C, B, F, n, my_date.left_boarder(0, my_date));
 
-		//y2[0] = my_date.left_boarder(0, my_date);
         if ((TEST_P == 1) || (TEST_P == 3)) // TEST_P == 1 - смешанная задача
                                             // TEST_P == 3 - два потока на концах
         {
