@@ -22,8 +22,7 @@ std::vector<double> quasilinear(int n, double t, double h, double tau, int TEST_
 	for (double j = 0; j <= t; j += tau)
 	{
 		for (int i = 1; i != n + 1; i++)
-			a[i] = (0.5 * (K_quasi(y1[i], my_date) + K_quasi(y1[i - 1], my_date)));
-
+			a[i] = 0.5 * (K_quasi(y1[i], my_date) + K_quasi(y1[i - 1], my_date));
 		for (int i = 1; i <= n; i++)
 		{
 			A[i] = a[i] / h;
@@ -32,14 +31,14 @@ std::vector<double> quasilinear(int n, double t, double h, double tau, int TEST_
 		}
 		for (int i = 1; i != n; i++)
 			F[i] = my_date.c * my_date.rho * y1[i] * h / tau;
-		y2 = progon(A, C, B, F, n, my_date.left_boarder(j, my_date));
 
 		if ((TEST_P == 1) || (TEST_P == 3)) // TEST_P == 1 - смешанная задача
 											// TEST_P == 3 - два потока на концах
 		{
-			double kappa = (a[n - 1] / h) / (my_date.c * my_date.rho * h / (2 * tau) + a[n - 2] / h);
-			double mu = (my_date.c * my_date.rho * y1[n - 1] * h / tau + my_date.right_boarder(j, my_date))
-				/ (my_date.c * my_date.rho * h / (2 * tau) + a[n - 1] / h);
+			double kappa = (a[n] / h) / (my_date.c * my_date.rho * h / (2 * tau) + a[n] / h);
+			double mu = (my_date.c * my_date.rho * y1[n] * h / (2 * tau) + my_date.right_boarder(j, my_date))
+				/ (my_date.c * my_date.rho * h / (2 * tau) + a[n] / h);
+			y2 = progon(A, C, B, F, n, my_date.left_boarder(j, my_date), kappa, mu);
 			y2[n] = kappa * y2[n - 1] + mu;
 			if (TEST_P == 3 )
 			{
@@ -50,7 +49,10 @@ std::vector<double> quasilinear(int n, double t, double h, double tau, int TEST_
 			}
 		}
 		else if (TEST_P == 2)
+		{
+			y2 = progon(A, C, B, F, n, my_date.left_boarder(j, my_date), 0, 0);
 			y2[n] = my_date.right_boarder(j, my_date);
+		}
 
 		for (int i = 0; i != y1.size(); i++)
 			fout << j << '\t' << i * h << '\t' << y1[i] << '\n';
@@ -81,7 +83,6 @@ std::vector<double> non_linear(int n, double t, double h, double tau, int TEST_P
 	//вычисление по временным слоям
 	for (double j = 0; j <= t; j += tau)
 	{
-		std::cout << j << std::endl;
 		for (int k = 0; k != M; k++) {
 			for (int i = 1; i != n + 1; i++)
 				a[i] = (0.5 * (K_quasi(y1[i], my_date) + K_quasi(y1[i - 1], my_date)));
@@ -94,14 +95,13 @@ std::vector<double> non_linear(int n, double t, double h, double tau, int TEST_P
 			// инициализация функции правой части
 			for (int i = 1; i != n; i++)
 				F[i] = my_date.c * my_date.rho * y2[i] * h / tau;
-			y_tmp = progon(A, C, B, F, n, my_date.left_boarder(j, my_date));
-			//косяк в правой части
 			if ((TEST_P == 1) || (TEST_P == 3)) // TEST_P == 1 - смешанная задача
 												// TEST_P == 3 - два потока на концах
 			{
-				double kappa = (a[n - 1] / h) / (my_date.c * my_date.rho * h / (2 * tau) + a[n - 2] / h);
-				double mu = (my_date.c * my_date.rho * y2[n - 1] * h / (2 * tau) + my_date.right_boarder(j, my_date))
-					/ (my_date.c * my_date.rho * h / (2 * tau) + a[n - 1] / h);
+				double kappa = (a[n] / h) / (my_date.c * my_date.rho * h / (2 * tau) + a[n] / h);
+				double mu = (my_date.c * my_date.rho * y2[n] * h / (2 * tau) + my_date.right_boarder(j, my_date))
+					/ (my_date.c * my_date.rho * h / (2 * tau) + a[n] / h);
+				y_tmp = progon(A, C, B, F, n, my_date.left_boarder(j, my_date), kappa, mu);
 				y1[n] = kappa * y1[n - 1] + mu;
 				if (TEST_P == 3)//ИЗ УСЛОВИЙ ПОТОКА, А НЕ ИЗ ПРОГОНКИ???????
 				{
@@ -112,12 +112,15 @@ std::vector<double> non_linear(int n, double t, double h, double tau, int TEST_P
 				}
 			}
 			else if (TEST_P == 2)
+			{
+				y_tmp = progon(A, C, B, F, n, my_date.left_boarder(j, my_date), 0, 0);
 				y_tmp[n] = my_date.right_boarder(j, my_date);
+			}
 			y1 = y_tmp;
 		}
-		y2 = y1;
-		for (int i = 0; i != y1.size(); i++)
+		for (int i = 0; i != y2.size(); i++)
 			fout << j << '\t' << i * h << '\t' << y1[i] << '\n';
+		y2 = y1;
 	}
 	fout.close();
 	return y1;
