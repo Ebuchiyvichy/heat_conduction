@@ -102,7 +102,7 @@ std::vector<double> non_linear(int n, double t, double h, double tau, int TEST_P
 				double mu = (my_date.c * my_date.rho * y2[n] * h / (2 * tau) + my_date.right_boarder(j, my_date))
 					/ (my_date.c * my_date.rho * h / (2 * tau) + a[n] / h);
 				y_tmp = progon(A, C, B, F, n, my_date.left_boarder(j, my_date), kappa, mu);
-				y1[n] = kappa * y1[n - 1] + mu;
+				y_tmp[n] = kappa * y1[n - 1] + mu;
 				if (TEST_P == 3)//ÈÇ ÓÑËÎÂÈÉ ÏÎÒÎÊÀ, À ÍÅ ÈÇ ÏĞÎÃÎÍÊÈ???????
 				{
 					kappa = (a[0] / h) / (my_date.c * my_date.rho * h / tau + a[1] / h + a[0] / h);
