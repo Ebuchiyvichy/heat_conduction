@@ -10,19 +10,20 @@ int main()
 //	double	h = 0.2;
 	double	h = 0.02;
 	double	tau = 0.02;
-	double	T = 2.0;
+	double	T = 1.0;
 
 	std::cout << "Variant 2 (a)" << std::endl;
 	DATA.left_boarder = &u0;
-//	DATA.right_boarder = &u0_t; //èç ìåòîäû
-	DATA.right_boarder = &P2;	//Èðèí âàðèàíò
-
-//	integro_interpolation(DATA.L / h, T, h, tau, 2, 0, DATA);
+//	DATA.right_boarder = &u0_t; //˜˜ ˜˜˜˜˜˜
+	DATA.right_boarder = &u0;	//˜˜˜˜ ˜˜˜˜˜˜˜
+	std::cout << non_linear_iter(DATA.L / h, T, h, tau, 2, DATA);
+//	new_test(DATA.L / h, T, h, tau, 1, DATA);
+//	integro_interpolation(DATA.L / h, T, h, tau, 1, 0, DATA);
 //	integro_interpolation(DATA.L / h, T, h, tau, 2, 0.5, DATA);
-//	integro_interpolation(DATA.L / h, T, h, tau, 2, 1, DATA);
-	quasilinear(DATA.L / h, T, h, tau, 1, DATA);
-	non_linear(DATA.L / h, T, h, tau, 1, DATA);
-	/*TEST_P == 1 - right edge with flux, left with temporary temperature
+//	integro_interpolation(DATA.L / h, T, h, tau, 1, 1, DATA);
+//	quasilinear(DATA.L / h, T, h, tau, 1, DATA);
+//	non_linear(DATA.L / h, T, h, tau, 1, DATA);
+	/*TEST_P == 1 - left edge with flux, right with temporary temperature
 	  TEST_P == 2 - temporary temperature
       TEST_P == 3 - flux on edges*/
 //	error_check(0.01, 0.08, 1, 2, DATA);

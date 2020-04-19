@@ -125,3 +125,56 @@ std::vector<double> non_linear(int n, double t, double h, double tau, int TEST_P
 	fout.close();
 	return y1;
 }
+
+int non_linear_iter(int n, double t, double h, double tau, int TEST_P, Date my_date)
+{
+	std::ofstream		fout;
+	std::vector<double>	a(n + 1);
+	std::vector<double> B(n);
+	std::vector<double> A(n + 1);
+	std::vector<double> C(n);
+	std::vector<double> F(n);
+	std::vector<double> y1(n + 1);	// значения на текущем временном слое
+	std::vector<double> y2(n + 1);	// значения на следующем временном слое
+	std::vector<double> y_tmp(n + 1);	// вспомогательный вектор для выполнения итераций
+
+	// инициализация начальными данными
+	for (int i = 0; i <= n; i++)
+		y2[i] = u0_t(i * h, my_date);
+	y1 = y2;
+
+	fout.open("Non_linear.txt");
+	//вычисление по временным слоям
+	int iter = 0;
+	for (double j = 0; j <= t; j += tau)
+	{
+		do {
+			y1 = y2;
+			for (int i = 1; i != n + 1; i++)
+				a[i] = (0.5 * (K_quasi(y1[i], my_date) + K_quasi(y1[i - 1], my_date)));
+			for (int i = 1; i <= n; i++)
+			{
+				A[i] = a[i] / h;
+				B[i - 1] = A[i];
+				C[i - 1] = A[i - 1] + B[i - 1] + my_date.c * my_date.rho * h / tau;
+			}
+			// инициализация функции правой части
+			for (int i = 1; i != n; i++)
+				F[i] = my_date.c * my_date.rho * y2[i] * h / tau;
+			if (TEST_P == 2)
+			{
+				F[0] -= A[0]*my_date.left_boarder(j, my_date);
+				F[n-1] -= B[n-1]*my_date.right_boarder(j, my_date);
+				y2 = progon(A, C, B, F, n, my_date.left_boarder(j, my_date), 0, 0);
+				y2[n] = my_date.right_boarder(j, my_date);
+			}
+			else {
+				std::cout << "Неправильный номер теста для подсчета итераций";
+				break;
+			}
+			iter++;
+		} while (norm(y1,y2) > EPS);
+	}
+	fout.close();
+	return iter;
+}

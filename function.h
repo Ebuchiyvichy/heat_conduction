@@ -27,7 +27,7 @@ double	K_quasi(double x, Date my_date)
 
 double	P1(double t, Date my_data)
 {
-	if (t > EPS && t < my_data.t0)
+	if (t >= EPS && t < my_data.t0)
 		return my_data.Q;
 	else
 		return 0;
@@ -35,7 +35,7 @@ double	P1(double t, Date my_data)
 
 double	P2(double t, Date my_data)
 {
-	if (EPS < t && t < my_data.t0)
+	if (EPS <= t && t < my_data.t0)
 		return 2 * my_data.Q * t;
 	else
 		return 0;
@@ -72,10 +72,28 @@ double	u0(double x, Date my_data)
 double	u0_t(double x, Date my_data)
 {
     //return my_data.u0 - x * (my_data.L - x);
-    //return sin(x);
+    return sin(x);
 
 //	return 0;	//метода
-	return my_data.u0;	//Ирин вариант
+	//return my_data.u0;	//Ирин вариант
+}
+
+//Правая прогонка
+std::vector<double> progon(std::vector<double> a, std::vector<double> b, std::vector<double> c, std::vector<double> f, int n)
+{
+	std::vector<double> ksi(n);
+	std::vector<double> etta(n);
+	ksi[0] = -c[0] / b[0];
+	etta[0] = f[0] / b[0];
+	
+    for (int i = 1; i < n; i++)
+	{
+		ksi[i] = -c[i] / (b[i] + a[i] * ksi[i-1]);
+		etta[i] = (-a[i] * etta[i-1]+f[i]) / (a[i] * ksi[i-1] + b[i]);
+	}
+	for(int i = n-2; i > -1; i--)
+		etta[i] += ksi[i] * etta[i+1];
+	return etta;
 }
 
 //левая прогонка
@@ -85,8 +103,11 @@ std::vector<double> progon(std::vector<double> a, std::vector<double> b, std::ve
 	std::vector<double>	ksi(n);
 	std::vector<double>	etta(n);
 
-	ksi[n - 1] = a[n - 1] / (b[n - 1] - c[n - 1] * kappa);
-	etta[n - 1] = (f[n - 1] + c[n - 1] * mu) / (b[n - 1] - c[n - 1] * kappa);
+	
+	ksi[n - 1] = a[n - 1] / (b[n - 1]);
+	etta[n - 1] = f[n - 1] / (b[n - 1]);
+	//ksi[n - 1] = a[n - 1] / (b[n - 1] - c[n - 1]);
+	//etta[n - 1] = (f[n - 1] + c[n - 1]) / (b[n - 1] - c[n - 1]);
 
     for (int i = n - 2; i >= 1; i--)
 	{
@@ -97,6 +118,13 @@ std::vector<double> progon(std::vector<double> a, std::vector<double> b, std::ve
 
 	for (int i = 1; i != n; i++)
 		y[i] = ksi[i] * y[i-1] + etta[i];
+	return y;
+}
+
+std::vector<double> convert_dim(std::vector<double> y, std::vector<double> z)
+{
+	for (int i = 1; i < z.size()+1; i++)
+		y[i] = z[i-1];
 	return y;
 }
 
