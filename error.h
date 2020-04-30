@@ -24,7 +24,7 @@ void error_check(double h, double tau, double sigma, int TEST_P,  Date DATA)
     fout.open("Error_file.txt");
     fout << "\n Integrointerpolation \n";
     int dim = 2;
-    double T = 0.05;
+    double T = tau;
     std::cout << "Error is ready\n";
     double f0 = fabs(integro_interpolation(DATA.L / h , T, h, tau, TEST_P, sigma, DATA)[10] -
                      integro_interpolation(DATA.L * 2 / h , T, h / (2), tau / (4), TEST_P, sigma, DATA)[10 * 2]);

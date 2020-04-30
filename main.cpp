@@ -7,25 +7,25 @@
 int main()
 {
 	Date	DATA;
-//	double	h = 0.2;
-	double	h = 0.02;
-	double	tau = 0.02;
-	double	T = 2.0;
+	double	h = 0.2;
+	double	tau = 0.0002;
+	double	T = 1;
 
 	std::cout << "Variant 2 (a)" << std::endl;
 	DATA.left_boarder = &u0;
-//	DATA.right_boarder = &u0_t; //из методы
-	DATA.right_boarder = &P2;	//Ирин вариант
+//	DATA.right_boarder = &u0_t; //пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	DATA.right_boarder = &u0;	//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
 //	integro_interpolation(DATA.L / h, T, h, tau, 2, 0, DATA);
 //	integro_interpolation(DATA.L / h, T, h, tau, 2, 0.5, DATA);
-//	integro_interpolation(DATA.L / h, T, h, tau, 2, 1, DATA);
-	quasilinear(DATA.L / h, T, h, tau, 1, DATA);
-	non_linear(DATA.L / h, T, h, tau, 1, DATA);
+//	integro_interpolation(DATA.L / h, 0.3, h, tau, 2, 0.2, DATA);
+ 	quasilinear(DATA.L / h, T, h, tau, 2, DATA);
+	non_linear(DATA.L / h, T, h, tau, 2, DATA);
 	/*TEST_P == 1 - right edge with flux, left with temporary temperature
 	  TEST_P == 2 - temporary temperature
       TEST_P == 3 - flux on edges*/
-//	error_check(0.01, 0.08, 1, 2, DATA);
+//	error_check(h, tau, 1, 2, DATA);
+	std::cout << "End";
 	system("pause");
 	return (0);
 }

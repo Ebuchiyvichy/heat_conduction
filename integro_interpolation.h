@@ -21,7 +21,7 @@ std::vector<double> integro_interpolation(int n, double T,  double h, double tau
     std::vector<double> y2(n+1);	// следующий временной слой
 	std::string			str = "Integro_interpolation_mult_";
 
-	str += std::to_string(sigma) + ".txt";
+	str += std::to_string(sigma) + std::to_string(T) + ".txt";
 
     // инициализация начальными данными
 	for (int i = 0; i <= n; i++)
@@ -42,7 +42,7 @@ std::vector<double> integro_interpolation(int n, double T,  double h, double tau
     std::cout << "Coefficients was found\n";
     std::vector<double> tmp(n);
     //вычисление по временным слоям
-    for (double j = 0; j <= T; j += tau)
+    for (double j = tau; j <= T; j += tau)
     {
         // инициализация функции правой части
         for (int i = 1; i != n; i++)
@@ -54,7 +54,7 @@ std::vector<double> integro_interpolation(int n, double T,  double h, double tau
 			double mu = (my_date.c * my_date.rho * y1[n - 1] * h / (2 * tau) + sigma * my_date.right_boarder(j, my_date) +
 				(1 - sigma) * (my_date.right_boarder((j - tau), my_date) - a[n] * (y1[n] - y1[n - 1]) / h))
 				/ (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[n] / h);
-			y2 = progon(A, C, B, F, n, my_date.left_boarder(j, my_date), kappa, mu);
+			y2 = progon(A, C, B, F, n, my_date.left_boarder(j, my_date), my_date.right_boarder(j,my_date), kappa, mu);
 			y2[n] = kappa * y2[n - 1] + mu;
             if (TEST_P == 3)//из условий потока(?)
             {
@@ -67,13 +67,15 @@ std::vector<double> integro_interpolation(int n, double T,  double h, double tau
         }
 		else if (TEST_P == 2)
 		{
-			y2 = progon(A, C, B, F, n, my_date.left_boarder(j, my_date), 0, 0);
-			y2[n] = my_date.right_boarder(j, my_date);
+			y2 = progon(A, C, B, F, n, my_date.left_boarder(j, my_date),my_date.right_boarder(j,my_date), 0, 0);
+			y2[n] = my_date.left_boarder(j, my_date);
 		}
-        for (int i = 0; i != y1.size(); i++)
-            fout << j << '\t' << i * h << '\t' << y1[i] << '\n';
+        // for (int i = 0; i != y1.size(); i++)
+        //     fout << '\t' << i * h << '\t' << y1[i] << '\n';
         y1 = y2;
     }
+    for (int i = 0; i != y1.size(); i++)
+        fout << '\t' << i * h << '\t' << y1[i] << '\n';
     fout.close();
     return y1;
 }
