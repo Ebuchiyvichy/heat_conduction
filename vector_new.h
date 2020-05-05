@@ -13,7 +13,7 @@
 #include <functional>
 #include <string>;
 
-double	EPS = 1.e-5;
+double	EPS = 1.e-3;
 double PI = 3.1415926535;
 
 struct Date
@@ -30,12 +30,11 @@ struct Date
 
 	double	t0 = 0.5; //Ирин вариант
 	double	Q = 10;
-	double	L = 10;
-	//double	u0 = 0.2;
+	double	L = 1;
 	double	alpha = 0.5;
 	double	beta = 2;
 	double	gamma = 2;
-	double	c = 5;
+	double	c = 2;
 	double	rho = 0.25;
 
 	double	k1 = 1;
@@ -44,7 +43,7 @@ struct Date
 	double	x2 = 4.0 / 5;
     double kappa = 0.5;
     double sigma = 2;
-    double u0 = pow(sigma*c*c/kappa,1/sigma);
+    double u0 = 0.2;
 	std::function<double(double, Date)>	left_boarder;
 	std::function<double(double, Date)>	right_boarder;
 };

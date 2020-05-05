@@ -41,7 +41,8 @@ void error_check(double h, double tau, double sigma, int TEST_P,  Date DATA)
             f0 = f1;
         }
     }
- /*   fout << "\n Quasi \n";
+    /*
+    fout << "\n Quasi \n";
     std::cout << "Error is ready\n";
     f0 = fabs(quasilinear(DATA.L   / h , T, h, tau, TEST_P, DATA)[10] -
                       quasilinear(DATA.L * 2 / h , T, h / (2), tau / (2), TEST_P, DATA)[10 * 2]);
