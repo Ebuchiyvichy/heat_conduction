@@ -27,15 +27,21 @@ double	K_quasi(double x, Date my_date)
 
 double	P1(double t, Date my_data)
 {
+<<<<<<< HEAD
 	// if (t > EPS && t < my_data.t0)
 	// 	return my_data.Q;
 	// else
+=======
+	if (t >= EPS && t < my_data.t0)
+		return my_data.Q;
+	else
+>>>>>>> 6f4eba52c5734546193533475c81b702795309e2
 		return 0;
 }
 
 double	P2(double t, Date my_data)
 {
-	if (EPS < t && t < my_data.t0)
+	if (EPS <= t && t < my_data.t0)
 		return 2 * my_data.Q * t;
 	else
 		return 0;
@@ -88,23 +94,6 @@ std::vector<double> progon(int n, std::vector<double> a, std::vector<double> b, 
 	std::vector<double> alfa(n+1);
 	std::vector<double> betta(n+1);
 	
-	// для двух постоянных температур
-	/*
-	d[1] += a[1]* my_data.left_boarder(0, my_data);
-	d[n-1] += c[n-1] * my_data.right_boarder(my_data.L, my_data);
-	*/
-
-	//для источника и температуры
-	/*
-	d[n-1] += c[n-1] * mu; 
-	b[n-1] -= c[n-1] * kappa;
-	*/
-	
-	// для двух источников
-	// b[1] -= a[1]*kappa[1];
-	// b[n-1] -= c[n-1]*kappa[0];
-	// d[1] += a[1]*mu[1]; d[n-1] += c[n-1]*mu[0];
-
 	a[1] = 0; c[n-1] = 0;
 	alfa[2] = c[1] / b[1]; betta[2] = d[1] / b[1];
 
@@ -144,7 +133,6 @@ std::vector<double> progon(std::vector<double> a, std::vector<double> b, std::ve
 		y[i] = ksi[i] * y[i-1] + etta[i];
 	return y;
 }
-
 
 double intergate(std::vector<double> y, double h){
     double sum = 0.0;

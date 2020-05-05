@@ -11,33 +11,33 @@
 
 std::vector<double> integro_interpolation(int n, double T,  double h, double tau, int TEST_P, double sigma, Date my_date)
 {
+    int N = n-1;
     std::ofstream		fout;
-    std::vector<double>	a(n+1);
-    std::vector<double> B(n);
-    std::vector<double> A(n+2);
-    std::vector<double> C(n+1);
-    std::vector<double> F(n+1);
-    std::vector<double> y1(n+1);	// значения на текущем временном слое
-    std::vector<double> y2(n+1);	// следующий временной слой
+    std::vector<double>	a(N);
+    std::vector<double> B(N-1);
+    std::vector<double> A(N-1);
+    std::vector<double> C(N-1);
+    std::vector<double> F(N-1);
+    std::vector<double> y1(n);	// значения на текущем временном слое
+    std::vector<double> y2(n);	// следующий временной слой
 	std::string			str = "Integro_interpolation_mult_";
 
 	str += std::to_string(sigma) + ".txt";
 
     // инициализация начальными данными
-	for (int i = 0; i <= n; i++)
+	for (int i = 0; i < n; i++)
 		y1[i] = u0_t(i*h, my_date);
-	for (int i = 0; i != n + 1; i++)
+	for (int i = 0; i < N; i++)
 		a[i] = K(i * h - 0.5 * h, my_date);
 
      fout.open(str);
 
     //коэффициенты прогонки
-    A[0] = 0;
-    for (int i = 1; i <= n; i++)
+    for (int i = 0; i < N-1; i++)
     {
         A[i] = sigma / h * a[i];
-        B[i-1] = A[i];
-        C[i-1] = A[i-1] + B[i-1] + my_date.c * my_date.rho * h / tau;
+        B[i] = sigma / h * a[i+1];
+        C[i] = - (A[i] + B[i] + my_date.c * my_date.rho * h / tau);
     }
     std::cout << "Coefficients was found\n";
     std::vector<double> kappa;
