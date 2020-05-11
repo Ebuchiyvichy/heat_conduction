@@ -11,29 +11,29 @@
 
 std::vector<double> integro_interpolation(int n, double T,  double h, double tau, int TEST_P, double sigma, Date my_date)
 {
-    int N = n-1;
+
     std::ofstream		fout;
-    std::vector<double>	a(N);
-    std::vector<double> B(N-1);
-    std::vector<double> A(N-1);
-    std::vector<double> C(N-1);
-    std::vector<double> F(N-1);
-    std::vector<double> y1(n);	// значения на текущем временном слое
-    std::vector<double> y2(n);	// следующий временной слой
-	std::string			str = "Integro_interpolation_mult_";
+	std::vector<double>	a(n + 1);
+	std::vector<double> B(n);
+	std::vector<double> A(n + 1);
+	std::vector<double> C(n);
+	std::vector<double> F(n);
+	std::vector<double> y1(n + 1);	
+	std::vector<double> y2(n + 1);
+    std::string			str = "Integro_interpolation_mult_";
 
 	str += std::to_string(sigma) + ".txt";
 
     // инициализация начальными данными
 	for (int i = 0; i < n; i++)
 		y1[i] = u0_t(i*h, my_date);
-	for (int i = 0; i < N; i++)
+	for (int i = 0; i < n; i++)
 		a[i] = K(i * h - 0.5 * h, my_date);
 
      fout.open(str);
 
     //коэффициенты прогонки
-    for (int i = 0; i < N-1; i++)
+    for (int i = 0; i < n; i++)
     {
         A[i] = sigma / h * a[i];
         B[i] = sigma / h * a[i+1];
@@ -61,16 +61,16 @@ std::vector<double> integro_interpolation(int n, double T,  double h, double tau
             F[i] = my_date.c * my_date.rho * y1[i] * h / tau + (1 - sigma) * a[i] * (y1[i + 1] - 2 * y1[i] + y1[i - 1]) / h;
         
         if ((TEST_P == 1) || (TEST_P == 3)){
-		  mu[0] = (my_date.c * my_date.rho * y1[n - 1] * h / (2 * tau) + sigma * my_date.right_boarder(j, my_date) +
+            mu[0] = (my_date.c * my_date.rho * y1[n - 1] * h / (2 * tau) + sigma * my_date.right_boarder(j, my_date) +
 				(1 - sigma) * (my_date.right_boarder((j - tau), my_date) - a[n] * (y1[n] - y1[n - 1]) / h))
 				/ (my_date.c * my_date.rho * h / (2 * tau) + sigma * a[n] / h);
 
             if (TEST_P == 1){
                 F[n-1] += B[n-1] * mu[0]; 
-	            C[n-1] -= B[n-1] * kappa[0];                
-			    y2 = progon(n, A, C, B, F,my_date,  kappa, mu);
-                y2[0] = my_date.left_boarder(0, my_date);
-                y2[n] = kappa[0]* y2[n-1] + mu[0];
+	            C[n-1] -= B[n-1] * kappa[0]; 
+                y2[n] = my_date.right_boarder(0, my_date);               
+			    y2 = progon(n, A, C, B, F,my_date);
+                y2[0] = kappa[0]* y2[n-1] + mu[0];
             }
         
             else if (TEST_P == 3)
@@ -81,7 +81,7 @@ std::vector<double> integro_interpolation(int n, double T,  double h, double tau
                 C[1] -= A[1]*kappa[1];
 	            C[n-1] -= B[n-1]*kappa[0];
 	            F[1] += A[1]*mu[1]; F[n-1] += B[n-1]*mu[0];
-                y2 = progon(n, A, C, B, F, my_date, kappa, mu);
+                y2 = progon(n, A, C, B, F, my_date);
                 y2[0] = kappa[1]*y2[1] + mu[1];
 	            y2[n] = kappa[0]* y2[n-1] + mu[0];
             }
@@ -91,15 +91,13 @@ std::vector<double> integro_interpolation(int n, double T,  double h, double tau
 		    F[n-1] += B[n-1] * my_date.right_boarder(my_date.L, my_date);
             y2[0] = my_date.left_boarder(0, my_date);
             y2[n] = my_date.right_boarder(my_date.L, my_date);
-            y2 = progon(n, A, C, B, F, my_date, kappa, mu);
+            y2 = progon(n, A, C, B, F, my_date);
 
         }
-        fout << j-tau << '\t' << intergate(y1,h) << std::endl;
+        for(int i = 0; i != y1.size(); i++)
+            fout << j-tau << '\t' << i*h << '\t' << y1[i] << '\n';
         y1 = y2;
     }
-    // for (int i = 0; i != y1.size(); i++)
-    //        fout  << '\t' << i * h << '\t' << y1[i] << '\n';
-    
     fout.close();
     return y1;
 }

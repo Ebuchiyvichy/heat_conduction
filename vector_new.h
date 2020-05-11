@@ -34,16 +34,17 @@ struct Date
 	double	alpha = 0.5;
 	double	beta = 2;
 	double	gamma = 2;
-	double	c = 2;
-	double	rho = 0.25;
+	double	c = 1;
+	double	rho = 1;
+    double u0 = 0.1;
 
 	double	k1 = 1;
 	double	k2 = 0.1;
 	double	x1 = 1.0 / 3;
-	double	x2 = 4.0 / 5;
+	double	x2 = 2.0 / 3;
     double kappa = 0.5;
     double sigma = 2;
-    double u0 = 0.2;
+    //double u0 = pow(sigma*c*c/kappa, 1/sigma);
 	std::function<double(double, Date)>	left_boarder;
 	std::function<double(double, Date)>	right_boarder;
 };
@@ -53,20 +54,6 @@ void print(std::vector<double> x)
     for (int i = 0; i!= x.size(); i++)
         std::cout << x[i] << '\t';
     std::cout << std::endl;
-}
-void print_in_file(std::vector<double> x, std::ofstream fout)
-{
-    for (int i = 0; i!= x.size(); i++)
-        fout << x[i] << '\t';
-    fout << std::endl;
-}
-
-std::vector<double>	cpy_vector(std::vector<double> tmp, std::vector<double> x)
-{
-
-    for (int i = 0; i < x.size(); i++)
-        tmp[i] = x[i];
-    return (tmp);
 }
 
 // переодпределение операций под вектора
@@ -107,6 +94,7 @@ double norm(std::vector<double> x)
         sum += (x[i]*x[i]);
     return sqrt(sum);
 }
+
 double	norm(std::vector<double> a, std::vector<double> b)
 {
     double	max;

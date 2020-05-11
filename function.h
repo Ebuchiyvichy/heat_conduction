@@ -27,15 +27,9 @@ double	K_quasi(double x, Date my_date)
 
 double	P1(double t, Date my_data)
 {
-<<<<<<< HEAD
 	// if (t > EPS && t < my_data.t0)
 	// 	return my_data.Q;
 	// else
-=======
-	if (t >= EPS && t < my_data.t0)
-		return my_data.Q;
-	else
->>>>>>> 6f4eba52c5734546193533475c81b702795309e2
 		return 0;
 }
 
@@ -73,21 +67,20 @@ double	u0(double x, Date my_data)
 
 //	return my_data.u0*pow(x, 1/my_data.sigma);	//метода
 	return my_data.u0;	//Ирин вариант
- //	return 0;
+//	return 0;
 }
 
 double	u0_t(double x, Date my_data)
 {
-    return my_data.u0 + x * (my_data.L - x);
+    //return my_data.u0 + x * (my_data.L - x);
     //return sin(x);
-	//return my_data.u0*pow(x, 1/my_data.sigma);
 
-	//return 0;	//метода
+	return 0;	//метода
 	//return my_data.u0;	//Ирин вариант
 }
 
 // правая прогонка
-std::vector<double> progon(int n, std::vector<double> a, std::vector<double> b, std::vector<double> c, std::vector<double> d, Date my_data, std::vector<double> kappa, std::vector<double> mu)
+std::vector<double> progon(int n, std::vector<double> a, std::vector<double> b, std::vector<double> c, std::vector<double> d, Date my_data)
 
 {
 	std::vector<double> y(n+1);
@@ -107,31 +100,6 @@ std::vector<double> progon(int n, std::vector<double> a, std::vector<double> b, 
 		y[i] = alfa[i+1] * y[i + 1] + betta[i+1];
 	
 	return  y;
-}
-
-
-//левая прогонка
-std::vector<double> progon(std::vector<double> a, std::vector<double> b, std::vector<double> c, std::vector<double> f, int n, double y0, double yn, double kappa, double  mu)
-{
-	std::vector<double> y(n+1);
-	std::vector<double>	ksi(n);
-	std::vector<double>	etta(n);
-
-	f[1] += a[1]*y0;
-	f[n-1] += a[n-1]*yn + c[n-1]*mu;
-	c[n-1] = 0; a[1] = 0;
-	ksi[n - 1] = a[n - 1] / (b[n - 1] - c[n - 1] * kappa);
-	etta[n - 1] = (f[n - 1] + c[n - 1] * mu) / (b[n - 1] - c[n - 1] * kappa);
-
-    for (int i = n - 2; i >= 1; i--)
-	{
-		ksi[i] = a[i] / (b[i] - c[i] * ksi[i+1]);
-		etta[i] = (f[i] + c[i] * etta[i+1]) / (b[i] - c[i] * ksi[i+1]);
-	}
-	y[0] = y0;
-	for (int i = 1; i <= n-1; i++)
-		y[i] = ksi[i] * y[i-1] + etta[i];
-	return y;
 }
 
 double intergate(std::vector<double> y, double h){
